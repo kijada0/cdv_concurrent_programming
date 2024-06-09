@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "stdlib.h": "c"
+    },
+    "actionButtons": {
+        "commands": [
+            {
+                "name": "send and build",
+                "command": "python send_file.py",
+            }
+        ]
+    }
+}
