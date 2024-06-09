@@ -5,7 +5,7 @@ import os
 # -------------------------------------------------------------------------------- #
 # Build configuration
 
-mian_file_name = "lab2_002.c"
+mian_file_name = "lab2_003.c"
 output_file_name = mian_file_name.split(".")[0]
 build_command = "gcc -pthread -lrt -O2 -pedantic -Werror -o" + output_file_name
 

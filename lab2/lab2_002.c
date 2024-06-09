@@ -11,6 +11,7 @@
 #include <fcntl.h>
 
 #include <semaphore.h>
+#include <pthread.h>
 
 // -------------------------------------------------------------------------------- //
 #define BUFFER_SIZE 5
@@ -24,7 +25,8 @@
 
 // -------------------------------------------------------------------------------- //
 
-void parent_process(int *shared_memory_printer) {
+void *parent_process(void *printer) {
+    int *shared_memory_printer = (int *)printer;
     int i = 0;
     int *address;
 
@@ -51,7 +53,8 @@ void parent_process(int *shared_memory_printer) {
 
 // -------------------------------------------------------------------------------- //
 
-void child_process(int *shared_memory_printer) {
+void *child_process(void *printer) {
+    int *shared_memory_printer = (int *)printer;
     int i = 0;
     int n = 0;
     int *address;
@@ -83,6 +86,7 @@ int main() {
     int shered_memory_id;
     int *shared_memory_printer;
     int pid;
+    pthread_t thread_parent, thread_child;
 
     printf("Start: %s\n", __FILE__);
 
@@ -94,18 +98,14 @@ int main() {
 
     *shared_memory_printer = 0;
 
-    // fork
-    printf("\nFork\n");
-    pid = fork();
-    if(pid == 0) {
-        child_process(shared_memory_printer);
-        printf("\nChild: Exit\n");
-        return 0;
-    }
-    else {
-        parent_process(shared_memory_printer);
-        wait(NULL);
-    }
+    // pthread
+    printf("\nThread\n");
+
+    pthread_create(&thread_child, NULL, child_process, (void *)shared_memory_printer);
+    pthread_create(&thread_parent, NULL, parent_process, (void *)shared_memory_printer);
+
+    pthread_join(thread_child, NULL);
+    pthread_join(thread_parent, NULL);
 
     // cleanup
     printf("\nCleanup\n");
