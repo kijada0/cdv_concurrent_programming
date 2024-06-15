@@ -10,7 +10,7 @@ output_file_name = mian_file_name.split(".")[0]
 build_command = "gcc -pthread -lrt -O2 -pedantic -Werror -o" + output_file_name
 
 local_subdir = "lab2/"
-local_dir_path = "d:/Studia/CDV/Semestr4/prog_wspol/" + local_subdir
+local_dir_path = os.getcwd() + "/" + local_subdir
 remote_dir_path = "/home/ad.cdv.pl/kkaczm27/wspol"
 
 # -------------------------------------------------------------------------------- #
@@ -19,7 +19,9 @@ remote_dir_path = "/home/ad.cdv.pl/kkaczm27/wspol"
 remote_host = "mars.edu.cdv.pl"
 username = "kkaczmarek6@edu.cdv.pl"
 
-ssh_key = "D:/Documents/keys/mars_cdv/mars_cdv_priv.pem"
+
+# ssh_key = "D:/Documents/keys/mars_cdv/mars_cdv_priv.pem"
+ssh_key = "/home/kijada/.ssh/cdv_mars_key"
 password = ""
 
 # -------------------------------------------------------------------------------- #

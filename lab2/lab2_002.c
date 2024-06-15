@@ -93,7 +93,10 @@ int main() {
     // init shared memory
     printf("Init shared memory\n");
     shered_memory_id = shm_open(SHERED_MEMORY_NAME, O_CREAT | O_RDWR, 0600);
-    ftruncate(shered_memory_id, SHERED_MEMORY_SIZE);
+    if(ftruncate(shered_memory_id, SHERED_MEMORY_SIZE) != 0) {
+        perror("ftruncate");
+        exit(1);
+    }
     shared_memory_printer = mmap(NULL, SHERED_MEMORY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shered_memory_id, 0);
 
     *shared_memory_printer = 0;

@@ -6,8 +6,9 @@
         "commands": [
             {
                 "name": "send and build",
-                "command": "python send_file.py",
+                "command": "python3 send_file.py",
             }
         ]
-    }
+    },
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }
