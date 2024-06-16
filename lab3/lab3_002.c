@@ -22,6 +22,8 @@
 #define SHERED_MEMORY_NAME "/kk_mem"
 
 pthread_mutex_t mutex;
+pthread_cond_t condition_writer, condition_reader;
+int global_counter = 0;
 
 // -------------------------------------------------------------------------------- //
 
@@ -35,63 +37,70 @@ void *writer_process(void *printer) {
     int *shared_memory_printer = (int *)printer;
     int i, j = 0;
     int *address;
+    int wait = 0;
 
     printf("Parent: Start\n");
 
     for(i = 1; i < ITERATIONS_COUNT+1; i++) {
-        if(j == 0){
-            pthread_mutex_lock(&mutex);
-            printf("Parent Lock: %d (%d)\n", i, j);
+        pthread_mutex_lock(&mutex);
+
+        while(global_counter >= BUFFER_SIZE)
+        {   
+            pthread_cond_signal(&condition_reader);
+            pthread_cond_wait(&condition_writer, &mutex);
         }
-        j++;
+
+        global_counter++;
+        // printf("Global counter: %d\n", global_counter);
 
         address = &shared_memory_printer[i%BUFFER_SIZE];
         *address = i;
 
         printf("Parent: %d\n", i);
 
-        if(j == BUFFER_SIZE) {
-            pthread_mutex_unlock(&mutex);
-            printf("Parent Unlock: %d (%d)\n", i, j);
-            j = 0;
-            usleep(get_random(100, 1000));
-        }
-    }
+        pthread_cond_signal(&condition_reader);
+        usleep(get_random(100, 500));
 
-    pthread_mutex_unlock(&mutex);
+        pthread_mutex_unlock(&mutex);
+        usleep(get_random(100, 1000));
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 
 void *reader_process(void *printer) {
     int *shared_memory_printer = (int *)printer;
-    int i, j = 0;
+    int i;
     int n = 0;
     int *address;
+    int data_ready = 0;
 
     printf("Child: Start\n");
 
     for(i = 1; i < ITERATIONS_COUNT+1; i++) {
-        if(j == 0) {
-            pthread_mutex_lock(&mutex);
-            printf("\t\tChild Lock: %d (%d)\n", i, j);
+        pthread_mutex_lock(&mutex);
+        
+        while(global_counter <= 0)
+        {
+            pthread_cond_signal(&condition_writer);
+            pthread_cond_wait(&condition_reader, &mutex);
         }
-        j++;
+
+        global_counter--;
+        // printf("\t\tGlobal counter: %d\n", global_counter);
 
         address = &shared_memory_printer[i%BUFFER_SIZE];
         n = *address;
 
         printf("\t\tChild: %d\n", n);
 
-        if(j == BUFFER_SIZE) {
-            pthread_mutex_unlock(&mutex);
-            printf("\t\tChild Unlock: %d (%d)\n", i, j);
-            j = 0;
-            usleep(get_random(100, 1000));
-        }
+        pthread_cond_signal(&condition_writer);
+        usleep(get_random(100, 500));
+
+        pthread_mutex_unlock(&mutex);
+        usleep(get_random(100, 1000));
     }
 
-    pthread_mutex_unlock(&mutex);
 }
 
 // -------------------------------------------------------------------------------- //

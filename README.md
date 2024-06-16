@@ -19,3 +19,9 @@ Rodzaje zmiennych współdzielonych przez wątki
 ### lab3_001.c
 Mutexy
 
+### lab3_002.c
+Mutexy i zmienne warunkowe
+
+### lab3_003.c
+Mutexy i zmienne warunkwe wielu producentów i konsumentów
+

@@ -10,7 +10,7 @@
             }
             {
                 "name": "build (local)",
-                "command": "gcc -pthread -lrt -O2 -pedantic -Werror -o output/lab3_001 lab3/lab3_001.c"
+                "command": "gcc -pthread -lrt -O2 -pedantic -Werror -o output/lab3_002 lab3/lab3_002.c"
             }
         ]
     },
