@@ -28,7 +28,7 @@
 
 void random_sleep() {
     int sleep_time = 1000 + rand() % 2000;
-    printf("Sleeping for %d ms\n", sleep_time);
+    printf("sleep(%d)\n", sleep_time);
     usleep(sleep_time * 1000);
 }
 
@@ -219,6 +219,8 @@ void elements_producer(char *container, uint8_t producer_id, uint8_t *running) {
         if(!*running) {
             break;
         }
+        
+        random_sleep();
 
         r = rand() % 2;
         if(r == 0) {
@@ -228,7 +230,6 @@ void elements_producer(char *container, uint8_t producer_id, uint8_t *running) {
         }
         printf(">\t\t\t\t\t\tProducer no. %d: %c\n", producer_id, *container);
 
-        random_sleep();
         sem_post(sem_gen);
     }
 
