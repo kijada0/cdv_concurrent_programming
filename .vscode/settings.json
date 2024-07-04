@@ -6,8 +6,8 @@
         "commands": [
             {
                 "name": "send and build",
-                "command": "python3 send_file.py",
-            }
+                "command": "python send_file.py",
+            },
             {
                 "name": "build (local)",
                 "command": "gcc -pthread -lrt -O2 -pedantic -Werror -o output/lab3_002 lab3/lab3_002.c"
