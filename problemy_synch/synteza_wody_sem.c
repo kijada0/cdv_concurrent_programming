@@ -17,7 +17,7 @@
 // -------------------------------------------------------------------------------- //
 
 #define MOLECULES_TO_CREATE         10
-#define PRODUCERS_COUNT             8
+#define PRODUCERS_COUNT             10
 
 #define SHERED_MEMORY_NAME          "/kk_mem_water"
 

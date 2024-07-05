@@ -31,18 +31,19 @@ Mutexy i zmienne warunkwe wielu producentów i konsumentów
 ### lab4_001.go
 Semafory w Go
 
-## Zaliczenie
-Problem synchronizacji
+## Problem synchronizacji - /problemy_synch
 
-### Synteza wody
-- Dostawcy wodoru oraz tlenu umieszczają w swoich jednoelementowych
-buforach (w losowych odstępach czasu) atom wodoru lub atom tlenu. 
-- Gdy wśród dostarczonych atomów znajdą się dwa wodoru i jeden tlenu,
-powstaje woda a ich dostawcy wracają do pracy. 
+### Synteza wody - synteza_wody_sem.c
+Realizacja za pomocą semaforów na cieżkich procesach
+
+- Dostawcy wodoru oraz tlenu umieszczają w swoich jednoelementowych buforach (w losowych odstępach czasu) atom wodoru lub atom tlenu. 
+- Gdy wśród dostarczonych atomów znajdą się dwa wodoru i jeden tlenu, powstaje woda a ich dostawcy wracają do pracy. 
 - Problem polega na zsynchronizowaniu pracy dostawców.
 
-### synteza_wody_sem.c
-Realizacja za pomocą semaforach na cięzkich procesach
-
-### synteza_wody_mutex.c
+### Świety Mikołaj - santa_claus_mutex.c
 Realizacja za pomocą mutexów i zmiennych warunkowych na lekkich procesach
+
+- Święty Mikołaj śpi w swojej chatce na biegunie północnym. Może go zbudzić jedynie przybycie dziewięciu reniferów lub trzy spośród dziesięciu skrzatów, chcących poinformować Mikołaja o problemach z produkcją zabawek (snu Mikołaja nie może przerwać mniej niż dziewięć reniferów ani mniej niż trzy skrzaty!). 
+- Gdy zbiorą się wszystkie renifery, Mikołaj zaprzęga je do sań, dostarcza zabawki grzecznym dzieciom (oraz studentom realizującym pilnie zadania z synchronizacji współbieżnych procesów), wyprzęga je i pozwala odejść na spoczynek. 
+- Mikołaj zbudzony przez skrzaty wprowadza je do biura, udziela konsultacji a później żegna. Obsługa reniferów ma wyższy priorytet niż obsługa skrzatów. 
+- Problem polega na synchronizacji działań Św. Mikołaja, reniferów i skrzatów.
