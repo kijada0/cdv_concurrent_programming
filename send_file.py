@@ -5,8 +5,9 @@ import os
 # -------------------------------------------------------------------------------- #
 # Build configuration
 
-# mian_file_name = "santa_claus_mutex.c"
-mian_file_name = "synteza_wody_sem.c"
+mian_file_name = "santa_claus_mutex.c"
+additional_files = ["barrier.c", "barrier.h"]
+# mian_file_name = "synteza_wody_sem.c"
 output_file_name = mian_file_name.split(".")[0]
 build_command = "gcc -pthread -lrt -O2 -pedantic -Werror -o " + output_file_name
 
@@ -20,8 +21,8 @@ remote_dir_path = "/home/ad.cdv.pl/kkaczm27/wspol"
 remote_host = "mars.edu.cdv.pl"
 username = "kkaczmarek6@edu.cdv.pl"
 
-ssh_key = "D:/Documents/keys/mars_cdv/mars_cdv_priv.pem"
-# ssh_key = "C:/Users/kacperka/Documents/ssh_key/mars_cdv/mars_cdv_priv.pem"
+# ssh_key = "D:/Documents/keys/mars_cdv/mars_cdv_priv.pem"
+ssh_key = "C:/Users/kacperka/Documents/ssh_key/mars_cdv/mars_cdv_priv.pem"
 # ssh_key = "/home/kijada/.ssh/cdv_mars_key"
 password = ""
 
@@ -99,6 +100,10 @@ def build_file(ssh, remote_path, mian_file, build_cmd):
     print("-"*40)
     command = "cd {};" .format(remote_path)
     command += "{} {}" .format(build_cmd, mian_file)
+
+    for file in additional_files:
+        command += " {}" .format(file)
+
     print("Build command: ", command)
 
     stdin, stdout, stderr = ssh.exec_command(command)
