@@ -15,14 +15,16 @@
 
 // -------------------------------------------------------------------------------- //
 
-#define RENIFER_COUNT       5
-#define RENIFER_TRESHOLD    3
+#define RENIFER_COUNT       9
+#define RENIFER_TRESHOLD    9
 
-#define ELF_COUNT           5
+#define ELF_COUNT           6
 #define ELF_TRESHOLD        3
 
-#define ITERATIONS_COUNT    5 // Renifer Treshold Amount
+#define ITERATIONS_COUNT    5
 #define SANTA_WAIT_LIMIT    25
+
+#define NEED_HELP_PROB      4
 
 // -------------------------------------------------------------------------------- //
 
@@ -71,8 +73,8 @@ void santa_process(santa_data_t *params) {
         // wait for signal
         printf("Santa: Waiting for signal\n");
         pthread_cond_wait(params->condition_santa, params->mutex_cond);
-        printf("Santa: Wake up\n");
         pthread_mutex_lock(params->mutex_bussy);
+        printf("Santa: Wake up\n");
         
         // check who wake up
         pthread_mutex_lock(mutex);
@@ -80,8 +82,6 @@ void santa_process(santa_data_t *params) {
         e_count = *params->elf_waiting;
         printf("Santa: Renifers: %d, Elfs: %d\n", r_count, e_count);
         pthread_mutex_unlock(mutex);
-
-        sleep(1);
 
         pthread_mutex_lock(mutex);
         if(*params->renifer_waiting >= RENIFER_TRESHOLD) {
@@ -93,9 +93,9 @@ void santa_process(santa_data_t *params) {
             safety_counter = 0;
 
             while(1) {
-                printf("Santa: Waiting for Renifers (%d)\n", safety_counter);
-
                 pthread_mutex_lock(mutex);
+                printf("Santa: Waiting for Renifers (%d), remaining renifers: %d\n", safety_counter, *params->renifer_waiting);
+                
                 if(*params->renifer_waiting == 0) {
                     pthread_mutex_unlock(mutex);
                     break;
@@ -117,6 +117,7 @@ void santa_process(santa_data_t *params) {
         }
         pthread_mutex_unlock(mutex);
 
+
         pthread_mutex_lock(mutex);
         if(*params->elf_waiting >= ELF_TRESHOLD) {
             pthread_mutex_unlock(mutex);
@@ -127,9 +128,9 @@ void santa_process(santa_data_t *params) {
             safety_counter = 0;
 
             while(1) {
-                printf("Santa: Waiting for Elfs (%d)\n", safety_counter);
-
                 pthread_mutex_lock(mutex);
+                printf("Santa: Waiting for Elfs (%d), remaining elfs: %d\n", safety_counter, *params->elf_waiting);
+
                 if(*params->elf_waiting == 0) {
                     pthread_mutex_unlock(mutex);
                     break;
@@ -195,7 +196,7 @@ void *renifer_process(void *args) {
         }
         pthread_mutex_unlock(mutex);
 
-        r = rand() % 5;
+        r = rand() % NEED_HELP_PROB;
         if(r == 0) {
             printf("\t\t\t\tRenifer (%d): Waiting for Santa\n", params.id);
             pthread_mutex_lock(mutex);
@@ -203,6 +204,7 @@ void *renifer_process(void *args) {
             pthread_mutex_unlock(mutex);
             
             pthread_barrier_wait(params.barrier);
+            printf("\t\t\t\tRenifer (%d): Barrier passed\n", params.id);
 
             // Check if Santa is runing
             pthread_mutex_lock(mutex);
@@ -257,7 +259,7 @@ void *elf_process(void *args) {
         }
         pthread_mutex_unlock(mutex);
 
-        r = rand() % 5;
+        r = rand() % NEED_HELP_PROB;
         if(r == 0) {
             printf("\t\t\t\t\t\t\t\tElf (%d): Waiting for Santa\n", params.id);
             pthread_mutex_lock(mutex);
@@ -265,6 +267,7 @@ void *elf_process(void *args) {
             pthread_mutex_unlock(mutex);
 
             pthread_barrier_wait(params.barrier);
+            printf("\t\t\t\t\t\t\t\tElf (%d): Barrier passed\n", params.id);
 
             // Check if Santa is runing
             pthread_mutex_lock(mutex);
@@ -435,25 +438,31 @@ int main() {
     santa_process(&santa_args);
     sleep(1);
 
-    printf("Destroy barriers ...\n");
-    pthread_barrier_destroy(&barrier_renifer);
-    pthread_barrier_destroy(&barrier_elf);
+    // printf("Destroy barriers ...\n");
+    // pthread_barrier_destroy(&barrier_renifer);
+    // pthread_barrier_destroy(&barrier_elf);
 
     // ---------------------------------------- //
 
     // Wait for threads
     printf("\nWait for threads ...\n");
-    for (i = 0; i < RENIFER_COUNT; i++) {
-        pthread_join(thread_tab_renifer[i], NULL);
-    }
-    for (i = 0; i < ELF_COUNT; i++) {
-        pthread_join(thread_tab_elf[i], NULL);
-    }
+    sleep(2);
+
+    // for (i = 0; i < RENIFER_COUNT; i++) {
+    //     pthread_join(thread_tab_renifer[i], NULL);
+    // }
+    // for (i = 0; i < ELF_COUNT; i++) {
+    //     pthread_join(thread_tab_elf[i], NULL);
+    // }
 
     // ---------------------------------------- //
 
-    // cleanup
+    // destroy barriers
+    printf("Destroy barriers ...\n");
+    // pthread_barrier_destroy(&barrier_renifer);
+    // pthread_barrier_destroy(&barrier_elf);
 
+    // cleanup
     printf("\nCleanup ...\n");
     pthread_mutex_destroy(&mutex);
     pthread_mutex_destroy(&mutex_cond);
